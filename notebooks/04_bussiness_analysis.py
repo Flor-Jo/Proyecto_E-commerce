@@ -1,9 +1,12 @@
+#Importamos librerias
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-df = pd.read_csv('C:/Users/flors/OneDrive/Escritorio/Flor/Proyecto E-Commerce/data/ecommerce_dataset.csv')
+df = pd.read_csv('data/ecommerce_dataset.csv')
+
+#------------------------------------------------------------------------------------------
 
 #Productos mas vendidos
 top_productos = df.groupby("product_name")["quantity"].sum().sort_values(ascending=False)
@@ -20,6 +23,8 @@ print(ventas_categoria)
 #Ventas por ciudad
 ventas_ciudad = df.groupby("city")["Ingresos"].sum().sort_values(ascending=False)
 print(ventas_ciudad)
+
+#----------------------------------------------------------------------------------------------------
 
 #Visualizaciones
 sns.set_style("whitegrid")
@@ -46,7 +51,7 @@ plt.tight_layout()
 
 plt.show()
 
-#Grafico Ciudades Top
+#Grafico Top Ciudades 
 
 city_sales = df.groupby("city")["Ingresos"].sum().sort_values(ascending=False)
 
@@ -80,6 +85,7 @@ plt.xticks(rotation=45)
 
 plt.show()
 
+#----------------------------------------------------------------------------------------------------
 
 #Analisis 1: Un pequeño número de productos genera la mayor parte del ingreso?
 producto_Ingreso = df.groupby("product_name")["Ingresos"].sum().sort_values(ascending=False)
@@ -100,8 +106,12 @@ plt.ylabel("Acumulacion de ingresos por %")
 
 plt.show()
 
+#-----------------------------------------------------------------------------------------------------------
+
 #Analisis 2: Cuanto gasta en promedio un cliente por compra?
 average_ticket = df["Ingresos"].mean()
+
+#----------------------------------------------------------------------------------------------------------
 
 #Analisis 3: Los productos mas caros venden menos?
 product_stats = df.groupby("product_name").agg({
@@ -122,3 +132,46 @@ plt.xlabel("Average Price")
 plt.ylabel("Total Quantity Sold")
 
 plt.show()
+
+#---------------------------------------------------------------------------------------------------------------
+
+#Analisis 4: Ticket promedio
+average_ticket = df["Ingresos"].mean()
+
+print("Ticket promedio:", average_ticket)
+
+#---------------------------------------------------------------------------------------------------------------
+
+#Analisis 5: Ingresos totales
+total_ingresos = df["Ingresos"].sum()
+
+print("Ingresos totales:", total_ingresos)
+
+#-----------------------------------------------------------------------------------------------------------------
+
+#Analisis 6: Clientes mas importantes
+top_customers = df.groupby("customer_id")["Ingresos"].sum().sort_values(ascending=False)
+
+print(top_customers.head(10))
+
+#---------------------------------------------------------------------------------------------------------------
+
+#Analisis 7: Segmentacion de clientes
+rfm = df.groupby("customer_id").agg({
+    "Ingresos": ["sum", "mean"],
+    "quantity": "sum"
+})
+
+print(rfm.head())
+
+#-------------------------------------------------------------------------------------------------------------
+
+#Analisis 8: Estacionalidad de ventas
+
+df["order_date"] = pd.to_datetime(df["order_date"])
+
+df["month"] = df["order_date"].dt.month
+
+ventas_mes = df.groupby("month")["Ingresos"].sum()
+
+ventas_mes.plot()
